@@ -1,0 +1,27 @@
+name: 02 - Tests automatiques
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: tests unitaires
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v6
+
+      - name: Configuration de Python 3.11.9
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11.9'
+
+      - name: Installation des dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Exécution des tests 
+        run: pytest -v
