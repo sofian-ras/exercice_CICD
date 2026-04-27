@@ -1,11 +1,22 @@
 """
 API Flask pour la prédiction de satisfaction client
+=======================================================
 
-Cette API permet de :
-- Vérifier la santé de l'API
-- Faire des prédictions de satisfaction client (1-10)
-- Faire des prédictions batch
-- Consulter l'historique des prédictions
+Cette API REST permet de :
+- Vérifier la santé de l'API            (GET  /health)
+- Faire des prédictions simples          (POST /predict)
+- Faire des prédictions en lot (batch)   (POST /batch_predict)
+- Consulter l'historique des prédictions (GET  /history)
+- Obtenir des statistiques globales      (GET  /stats)
+
+Format des features d'entrée :
+    [age, temps_abonnement (mois), nb_interactions, nb_reclamations]
+
+La satisfaction retournée est un score entre 1 (très insatisfait)
+et 10 (très satisfait).
+
+Auteur : Équipe ML
+Version : 1.0.0
 """
 
 from flask import Flask, request, jsonify
@@ -13,9 +24,15 @@ import pickle
 import numpy as np
 from datetime import datetime
 
+# ---------------------------------------------------------------------------
+# Initialisation de l'application Flask
+# ---------------------------------------------------------------------------
 app = Flask(__name__)
 
-# Chargement du modèle
+# ---------------------------------------------------------------------------
+# Chargement du modèle ML pré-entraîné
+# Le fichier satisfaction_model.pkl est généré par train_satisfaction_model.py
+# ---------------------------------------------------------------------------
 try:
     with open('satisfaction_model.pkl', 'rb') as f:
         model = pickle.load(f)
@@ -23,7 +40,7 @@ except FileNotFoundError:
     model = None
     print("Attention: satisfaction_model.pkl non trouvé. Exécutez train_satisfaction_model.py d'abord.")
 
-# Stockage en mémoire de l'historique
+# Stockage en mémoire de l'historique des prédictions (réinitialisé à chaque démarrage)
 prediction_history = []
 
 
@@ -55,9 +72,10 @@ def predict():
     Retourne:
         JSON avec la satisfaction prédite (1-10)
     """
+    # Récupération du corps JSON de la requête
     data = request.get_json()
 
-    # Validation
+    # Validation : vérification de la présence du champ obligatoire
     if 'features' not in data:
         return jsonify({'error': 'Le champ "features" est requis'}), 400
 
@@ -240,5 +258,11 @@ def stats():
     }), 200
 
 
+# ---------------------------------------------------------------------------
+# Point d'entrée de l'application
+# En production, utiliser un serveur WSGI (gunicorn, uWSGI) à la place
+# ---------------------------------------------------------------------------
 if __name__ == '__main__':
+    # debug=True active le rechargement automatique et les messages d'erreur détaillés
+    # Ne jamais utiliser debug=True en production !
     app.run(debug=True, port=5001)
