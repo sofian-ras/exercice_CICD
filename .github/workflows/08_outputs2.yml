@@ -5,7 +5,7 @@ on:
 jobs:
   premier-job:
     name: appelle du 1er workflow
-    uses: Christophe-Utopios/demo_cicd/.github/workflows/07_outputs.yml
+    uses: Christophe-Utopios/demo_cicd/.github/workflows/07_outputs.yml@main
 
   second-job:
     name: Affiche les outputs du 1er workflow
