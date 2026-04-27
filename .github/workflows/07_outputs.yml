@@ -1,6 +1,15 @@
 name: Workflow à reutiliser
 on:
-  - workflow_dispatch
+  workflow_dispatch:
+  workflow_call:
+    outputs:
+      variable1:
+        description: Premier output
+        value: ${{ jobs.job1.outputs.sortie1 }}
+      variable2:
+        description: Second output
+        value: ${{ jobs.job1.outputs.sortie2 }}
+
 
 jobs:
   job1:
