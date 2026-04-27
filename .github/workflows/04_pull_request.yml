@@ -1,12 +1,13 @@
 name: pull request
-
 on:
   pull_request:
     types: 
-      - opened # c'est le type par défaut
+      - opened # C'est le type par défaut
 
 jobs:
   exemple:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "il y a eu une pull request"
+      - run: echo "Il y a eu une pull request..."
+
+    

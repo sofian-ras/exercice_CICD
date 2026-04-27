@@ -1,1 +1,1 @@
-# exercice_cicd
+# demo_cicd
